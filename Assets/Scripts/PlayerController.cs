@@ -5,25 +5,29 @@ using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
-    [FormerlySerializedAs("MoveSpeed")] public float moveSpeed;
-    [FormerlySerializedAs("theRB")] public Rigidbody theRb;
+    public float moveSpeed;
     public float jumpForce;
+    public CharacterController controller;
+
+    private Vector3 m_MoveDirection;
+    public float gravityScale;
 
     // Start is called before the first frame update
     void Start()
     {
-        theRb = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        theRb.velocity = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, 
-            theRb.velocity.y, Input.GetAxis("Vertical") * moveSpeed);
-        
+        m_MoveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, 0f,
+            Input.GetAxis("Vertical") * moveSpeed);
+
         if (Input.GetButtonDown("Jump"))
-        {
-            theRb.velocity = new Vector3(theRb.velocity.x, jumpForce, theRb.velocity.z);
-        }
+            m_MoveDirection.y = jumpForce;
+
+        m_MoveDirection.y += (Physics.gravity.y * gravityScale);
+        controller.Move(m_MoveDirection * Time.deltaTime);
     }
 }

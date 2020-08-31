@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
@@ -21,8 +20,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        m_MoveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, m_MoveDirection.y,
-            Input.GetAxis("Vertical") * moveSpeed);
+        var yStore = m_MoveDirection.y;
+        m_MoveDirection = transform.forward * Input.GetAxis("Vertical") + 
+                          transform.right * Input.GetAxis("Horizontal");
+        m_MoveDirection = m_MoveDirection.normalized * moveSpeed;
+        m_MoveDirection.y = yStore;
 
         if (controller.isGrounded)
         {
